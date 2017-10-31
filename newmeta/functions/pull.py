@@ -1,7 +1,6 @@
 from apps.main.models import *
 from functions.util import *
 import requests
-import json
 import urllib
 
 
@@ -33,7 +32,8 @@ def getMatchData(version, gamemode, region):
 
     gamemode = gamemode.upper()
     region = region.upper()
-    assert(assertVersionGamemodeRegion(version=version,gamemode=gamemode,region=region))
+    assert(assertVersionGamemodeRegion(
+        version=version, gamemode=gamemode, region=region))
 
     initAllVersionGamemodeRegion()
 
@@ -59,7 +59,7 @@ def getMatchData(version, gamemode, region):
             match_id = matchIDs[i]
 
             try:
-                if Match.objects.filter(match_id=match_id,region__name=region):
+                if Match.objects.filter(match_id=match_id, region__name=region):
                     print "~ skipping (already have)"
                     continue
 
@@ -72,7 +72,8 @@ def getMatchData(version, gamemode, region):
                 )
 
                 if r.status_code is not 200:
-                    raise ValueError("ERROR, HTTP {s_code}".format(s_code=r.status_code))
+                    raise ValueError(
+                        "ERROR, HTTP {s_code}".format(s_code=r.status_code))
 
                 Match(
                     match_id=match_id,
@@ -82,7 +83,7 @@ def getMatchData(version, gamemode, region):
                     data=r.text
                 ).save()
 
-                print "~ success" 
+                print "~ success"
 
             except Exception as e:
                 print "~ " + str(e)
@@ -96,7 +97,8 @@ def getChampions(version, gamemode, region):
 
     gamemode = gamemode.upper()
     region = region.upper()
-    assert(assertVersionGamemodeRegion(version=version,gamemode=gamemode,region=region))
+    assert(assertVersionGamemodeRegion(
+        version=version, gamemode=gamemode, region=region))
 
     initAllVersionGamemodeRegion()
 
@@ -136,7 +138,8 @@ def getItems(version, gamemode, region):
 
     gamemode = gamemode.upper()
     region = region.upper()
-    assert(assertVersionGamemodeRegion(version=version,gamemode=gamemode,region=region))
+    assert(assertVersionGamemodeRegion(
+        version=version, gamemode=gamemode, region=region))
 
     initAllVersionGamemodeRegion()
 
@@ -162,7 +165,7 @@ def getItems(version, gamemode, region):
 
         item_id = data[item]['id']
         item_name = data[item]['name']
-        
+
         got, created = Item.objects.get_or_create(
             key=item_id,
             name=item_name,
@@ -171,45 +174,24 @@ def getItems(version, gamemode, region):
             gamemode=gamemode_object
         )
 
+
 """
 Notice how getChampions and getItems is almost identical?
 We can make it better, but that that is of low priority right now.
 """
 
+
 def getChampionIcons():
 
-    champs = Champion.objects.filter(region__name='NA',version__name=5.11,gamemode__name='NORMAL_5X5')
+    champs = Champion.objects.filter(
+        region__name='NA', version__name=5.11, gamemode__name='NORMAL_5X5')
     total = champs.count()
 
     for i in xrange(total):
 
-        print "Downlading champion icon {i} / {total}".format(i=i,total=total)
+        print "Downlading champion icon {i} / {total}".format(i=i, total=total)
 
         champ = champs[i]
-        name = champ.name.replace(" ","")
-        urllib.urlretrieve("http://ddragon.leagueoflegends.com/cdn/5.2.1/img/champion/" + name + ".png", "./img/" + name + ".png")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        name = champ.name.replace(" ", "")
+        urllib.urlretrieve("http://ddragon.leagueoflegends.com/cdn/5.2.1/img/champion/" +
+                           name + ".png", "./img/" + name + ".png")

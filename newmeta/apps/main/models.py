@@ -2,24 +2,24 @@ from django.db import models
 
 
 class Region(models.Model):
-	name = models.CharField(max_length=3)
+    name = models.CharField(max_length=3)
 
-	def __unicode__(self):
-		return self.name
+    def __unicode__(self):
+        return self.name
 
 
 class Version(models.Model):
-	name = models.CharField(max_length=4)
+    name = models.CharField(max_length=4)
 
-	def __unicode__(self):
-		return self.name
+    def __unicode__(self):
+        return self.name
 
 
 class Gamemode(models.Model):
-	name = models.CharField(max_length=11)
+    name = models.CharField(max_length=11)
 
-	def __unicode__(self):
-		return self.name
+    def __unicode__(self):
+        return self.name
 
 
 class Match(models.Model):
@@ -32,12 +32,12 @@ class Match(models.Model):
     data = models.TextField()
 
     def __unicode__(self):
-		return "{mid} {r} {v} {g}".format(
-			mid=self.match_id,
-			r=self.region.name,
-			v=self.version.name,
-			g=self.gamemode.name
-		)
+        return "{mid} {r} {v} {g}".format(
+            mid=self.match_id,
+            r=self.region.name,
+            v=self.version.name,
+            g=self.gamemode.name
+        )
 
     class Meta:
         unique_together = (('region', 'match_id'),)
@@ -57,7 +57,7 @@ class Champion(models.Model):
     roles = models.TextField(default="{}")
 
     def __unicode__(self):
-		return self.name
+        return self.name
 
     class Meta:
         unique_together = (('region', 'version', 'gamemode', 'key'),)
