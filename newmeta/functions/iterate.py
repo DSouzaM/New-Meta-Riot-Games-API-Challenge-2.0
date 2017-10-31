@@ -1,5 +1,5 @@
-from apps.main.models import *
-from functions.util import *
+from apps.main.models import Match, Region, Version, Gamemode, Champion, Item
+from functions.util import assertVersionGamemodeRegion
 import json
 
 """
@@ -12,7 +12,8 @@ def count_champ(version, gamemode, region):
 
     gamemode = gamemode.upper()
     region = region.upper()
-    assert(assertVersionGamemodeRegion(version=version,gamemode=gamemode,region=region))
+    assert(assertVersionGamemodeRegion(
+        version=version, gamemode=gamemode, region=region))
 
     # if gamemode == "NORMAL_5X5" and region == "NA":
     #     return
@@ -33,18 +34,18 @@ def count_champ(version, gamemode, region):
         version=version_object,
         gamemode=gamemode_object
     )
-    champions.update(wins=0,picks=0)
+    champions.update(wins=0, picks=0)
 
     for i in xrange(total):
 
-        print "Counting champion for match {i} / {total}".format(i=i,total=total)
+        print "Counting champion for match {i} / {total}".format(i=i, total=total)
 
         match = matches[i]
         data = json.loads(match.data)
 
         teams = {
-            data['teams'][0]['teamId']:data['teams'][0]['winner'],
-            data['teams'][1]['teamId']:data['teams'][1]['winner']
+            data['teams'][0]['teamId']: data['teams'][0]['winner'],
+            data['teams'][1]['teamId']: data['teams'][1]['winner']
         }
 
         for player in data['participants']:
@@ -53,12 +54,12 @@ def count_champ(version, gamemode, region):
             team_id = player['teamId']
 
             champ = champions.get(key=champ_id)
-            
+
             champ.picks += 1
-            
+
             if teams[team_id]:
                 champ.wins += 1
-            
+
             champ.save()
 
 
@@ -66,7 +67,8 @@ def count_item(version, gamemode, region):
 
     gamemode = gamemode.upper()
     region = region.upper()
-    assert(assertVersionGamemodeRegion(version=version,gamemode=gamemode,region=region))
+    assert(assertVersionGamemodeRegion(
+        version=version, gamemode=gamemode, region=region))
 
     region_object = Region.objects.get(name=region)
     version_object = Version.objects.get(name=version)
@@ -84,18 +86,18 @@ def count_item(version, gamemode, region):
         version=version_object,
         gamemode=gamemode_object
     )
-    items.update(wins=0,picks=0)
+    items.update(wins=0, picks=0)
 
     for i in xrange(total):
 
-        print "Counting item for match {i} / {total}".format(i=i,total=total)
+        print "Counting item for match {i} / {total}".format(i=i, total=total)
 
         match = matches[i]
         data = json.loads(match.data)
 
         teams = {
-            data['teams'][0]['teamId']:data['teams'][0]['winner'],
-            data['teams'][1]['teamId']:data['teams'][1]['winner']
+            data['teams'][0]['teamId']: data['teams'][0]['winner'],
+            data['teams'][1]['teamId']: data['teams'][1]['winner']
         }
 
         for player in data['participants']:
@@ -104,9 +106,9 @@ def count_item(version, gamemode, region):
 
             for i in xrange(7):
 
-                item = 'item'+str(i)
+                item = 'item' + str(i)
                 itemId = int(player['stats'][item])
-                
+
                 if itemId:
                     try:
                         item = items.get(key=itemId)
@@ -117,5 +119,5 @@ def count_item(version, gamemode, region):
 
                     if teams[team_id]:
                         item.wins += 1
-                    
+
                     item.save()
